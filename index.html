@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testing &amp; evidence reference — Year 12 &amp; 13 Digital Technology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <p class="kicker">Digital Technology · Year 12 &amp; 13</p>
+    <h1>Testing &amp; evidence</h1>
+    <p class="sub">The part of the standard that moves a program from <i>working</i> to Excellence — checking input, handling the cases that break things, and proving you did.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <span class="navlabel">Start here</span>
+    <a href="#how">How to use this guide</a>
+    <a href="#run">Running the demos</a>
+
+    <span class="navlabel">The idea</span>
+    <a href="#ladder">Where the marks are</a>
+    <a href="#cases">Expected, boundary, invalid</a>
+
+    <span class="navlabel">Making it robust</span>
+    <a href="#validate">Validating input</a>
+    <a href="#invalid">Handling the invalid case</a>
+    <a href="#flexible">Flexible code, not magic numbers</a>
+
+    <span class="navlabel">Evidencing it</span>
+    <a href="#table">The test table</a>
+    <a href="#harness">An automatic test runner</a>
+    <a href="#debug">Showing a bug fixed</a>
+
+    <span class="navlabel">Putting it together</span>
+    <a href="#journey">Achieved → Excellence</a>
+  </nav>
+
+  <main>
+    <div class="intro" id="how">
+      <p>The tkinter reference shows you how to <i>build</i> a program. This one shows you how to make it <i>good</i> — and, just as importantly, how to prove it is. For AS91896 (Year 12) and AS91906 (Year 13), the code that "works" earns Achieved. The marks above that come almost entirely from testing, validation, and the evidence you show for both.</p>
+
+      <p>Here is the uncomfortable truth most ākonga learn too late: at this level the difference between Achieved and Excellence is rarely the cleverness of your code. It is whether you checked that bad input is rejected, tested the values on the edges, handled the cases that would otherwise crash your program — and <i>documented</i> all of it clearly. This guide is about that work.</p>
+
+      <div class="legend">
+        <h3>How each page is laid out</h3>
+        <ul>
+          <li><b>What it is</b> — the idea in a sentence or two.</li>
+          <li><b>Why it matters</b> — how it maps onto the grade you can earn.</li>
+          <li><b>Example</b> — a complete program you can run to see it work.</li>
+          <li><b>In your assessment</b> — exactly what to put in your evidence.</li>
+          <li><b>Common gotcha</b> — the mistake that quietly caps your grade.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="intro" id="run" style="margin-top:32px">
+      <p><b>Running the demos.</b> Every example links to a Python file. These are console programs (no window), so run them in VS Code or from a terminal with, for example, <code>python validation_demo.py</code>, and read the printed output. The testing ideas are the same whether your real program takes input from <code>input()</code> or from a tkinter <code>Entry</code> — only the source of the value changes, never the checking.</p>
+      <p><a href="https://github.com/your-school/testing-evidence-reference">github.com/your-school/testing-evidence-reference</a> &nbsp;·&nbsp; <span class="nots">(replace with the real repo link once it is set up)</span></p>
+    </div>
+
+    <!-- ========================= THE IDEA ========================= -->
+    <p class="band">The idea<span class="bandsub">why testing is where the grade lives</span></p>
+
+    <section class="widget" id="ladder">
+      <div class="whead"><span class="wname">Where the marks are</span><span class="badge t2">L2</span><span class="badge t3">L3</span></div>
+      <p class="one-line">The grade ladder, read as a testing ladder.</p>
+      <div class="block"><p class="lbl">What it is</p>
+        <p>Both programming standards describe three grades. If you line them up, they are really describing three depths of testing and robustness. Read them this way and the path to Excellence stops being mysterious.</p></div>
+      <div class="ladder">
+        <div class="rung r-a"><p class="rlbl">Achieved — it works</p>
+          <p>The program performs the task and runs on ordinary, expected input. It is documented with comments. That is the whole bar — and it is also the ceiling if you stop here.</p></div>
+        <div class="rung r-m"><p class="rlbl">Merit — informed</p>
+          <p>Add organised testing on expected <i>and</i> boundary cases, comments that describe what the code does and why, and code that follows the conventions of the language. The program is now tested at its edges, not just its middle.</p></div>
+        <div class="rung r-e"><p class="rlbl">Excellence — refined</p>
+          <p>The program is well-structured, flexible, and robust: it checks input for validity and correctly handles expected, boundary <i>and</i> invalid cases. It is comprehensively tested and debugged, and you can show that journey.</p></div>
+      </div>
+      <div class="block" style="margin-top:20px"><p class="lbl">The one-sentence version</p>
+        <p>Expected cases pass → Achieved. Boundary cases tested too → Merit. Invalid cases handled and the whole thing proven robust → Excellence.</p></div>
+      <div class="block"><p class="lbl">Common gotcha</p>
+        <p>Students pour their time into making the code do something impressive, then submit with no real testing. A simple program, thoroughly tested and robust, will out-grade a clever program that falls over on an empty input box.</p></div>
+    </section>
+
+    <section class="widget" id="cases">
+      <div class="whead"><span class="wname">Expected, boundary, invalid</span><span class="badge t2">L2</span><span class="badge t3">L3</span></div>
+      <p class="one-line">The three kinds of test case — and why each earns its grade.</p>
+      <div class="block"><p class="lbl">What it is</p>
+        <p>Every input to your program falls into one of three groups. Naming them is what lets you say, truthfully, "I tested expected, boundary, and invalid cases" — the exact words the grade descriptions use.</p>
+        <ul>
+          <li><b>Expected</b> — ordinary valid input from the middle of the allowed range. The program is built for these. <span class="nots">e.g. a mark of 72 out of 100.</span></li>
+          <li><b>Boundary</b> — the values right on the edges of what is allowed, where off-by-one bugs live. <span class="nots">e.g. 0, 100, and each grade threshold like 50 and 80.</span></li>
+          <li><b>Invalid</b> — input that must be <i>rejected</i>, not processed. <span class="nots">e.g. -1, 101, or the word "abc".</span></li>
+        </ul></div>
+      <div class="block"><p class="lbl">Example</p>
+        <p>This program grades a mark out of 100, then runs all three kinds of case so you can see the difference:</p>
+        <pre><code class="language-python">LOWEST = 0
+HIGHEST = 100
+
+def grade_mark(mark):
+    if mark &lt; LOWEST or mark &gt; HIGHEST:
+        raise ValueError(f"mark must be {LOWEST}-{HIGHEST}, got {mark}")
+    if mark &gt;= 80:
+        return "Excellence"
+    if mark &gt;= 60:
+        return "Merit"
+    if mark &gt;= 50:
+        return "Achieved"
+    return "Not Achieved"
+
+# expected (normal), boundary (edges), invalid (must be rejected)
+print(grade_mark(72))     # Merit
+print(grade_mark(80))     # Excellence  -- a boundary worth checking
+print(grade_mark(101))    # raises ValueError -- correctly rejected</code></pre></div>
+      <div class="block"><p class="lbl">In your assessment</p>
+        <p>For each feature of your program, list a few inputs of each kind and what should happen. Boundary cases are the ones markers look for, because they are the ones students forget — always test the lowest value, the highest value, and any threshold where behaviour changes.</p></div>
+      <div class="block"><p class="lbl">Common gotcha</p>
+        <p>Testing only expected cases. Three "normal" inputs that all pass proves almost nothing — of course the happy path works. The marks are in the edges and the rejections.</p></div>
+      <div class="demo"><span class="runtag">▶ run</span><span>See all three kinds in <a href="./cases_demo.py">cases_demo.py</a></span></div>
+    </section>
+    <!-- ========================= MAKING IT ROBUST ========================= -->
+    <p class="band">Making it robust<span class="bandsub">the work that earns Excellence</span></p>
+
+    <section class="widget" id="validate">
+      <div class="whead"><span class="wname">Validating input</span><span class="badge t2">L2</span><span class="badge t3">L3</span></div>
+      <p class="one-line">Never trust what the user typed.</p>
+      <div class="block"><p class="lbl">What it is</p>
+        <p>Checking that input is sensible <i>before</i> you use it. A program that assumes the user always types a valid number is fragile — it crashes the moment they don't. Checking input for validity is named directly in both standards as part of being "flexible and robust".</p></div>
+      <div class="block"><p class="lbl">Why it matters</p>
+        <p>This is the single highest-value habit for your grade. An unvalidated program tops out at Achieved because it cannot handle invalid cases. Add validation and you unlock the Excellence criteria.</p></div>
+      <div class="block"><p class="lbl">Example</p>
+        <p>The same task written twice — fragile, then robust:</p>
+        <p class="cmp-tag">Fragile — crashes on bad input</p>
+        <pre><code class="language-python">def fragile_age(raw):
+    age = int(raw)          # crashes on "abc" or "" with a ValueError
+    return f"Next year you will be {age + 1}"</code></pre>
+        <p class="cmp-tag">Robust — checks type and range first</p>
+        <pre><code class="language-python">MIN_AGE = 0
+MAX_AGE = 130
+
+def robust_age(raw):
+    raw = raw.strip()
+    if not raw.isdigit():                 # rejects "", "abc", "-5", "3.5"
+        return "Please enter your age as a whole number."
+    age = int(raw)
+    if age &lt; MIN_AGE or age &gt; MAX_AGE:    # rejects out-of-range numbers
+        return f"Age must be between {MIN_AGE} and {MAX_AGE}."
+    return f"Next year you will be {age + 1}"</code></pre></div>
+      <div class="block"><p class="lbl">In your assessment</p>
+        <p>Validate every place the user gives you data. In a tkinter program that means checking <code>entry.get()</code> before you use it — the same logic as above, just a different source. Show a test where you type rubbish into a box and the program responds with a clear message instead of crashing.</p></div>
+      <div class="block"><p class="lbl">Common gotcha</p>
+        <p>Using <code>int(entry.get())</code> directly. An empty box or a typo throws an uncaught error and your program dies in front of the marker. Check first, convert second.</p></div>
+      <div class="demo"><span class="runtag">▶ run</span><span>Compare both versions in <a href="./validation_demo.py">validation_demo.py</a></span></div>
+    </section>
+
+    <section class="widget" id="invalid">
+      <div class="whead"><span class="wname">Handling the invalid case</span><span class="badge t2">L2</span><span class="badge t3">L3</span></div>
+      <p class="one-line">Rejecting bad input <i>gracefully</i>, not crashing.</p>
+      <div class="block"><p class="lbl">What it is</p>
+        <p>Validation spots bad input; handling it well means responding in a way that keeps the program running and tells the user what to fix. "Correctly handling expected, boundary and invalid cases" is the exact phrase from the Excellence criteria.</p></div>
+      <div class="block"><p class="lbl">Why it matters</p>
+        <p>A crash <i>is</i> a failure to handle the invalid case. Catching it and showing a clear message is the difference between a program that "mostly works" and one that is genuinely robust.</p></div>
+      <div class="block"><p class="lbl">Example</p>
+        <p>Two clean ways to handle invalid input. Choose whichever fits — return a message, or guard with <code>try/except</code> when a conversion might fail:</p>
+        <pre><code class="language-python">from tkinter import messagebox
+
+def add_score(raw, scores):
+    raw = raw.strip()
+    if not raw.isdigit():
+        messagebox.showwarning("Invalid", "Scores must be whole numbers.")
+        return                      # stop here -- do NOT add bad data
+    scores.append(int(raw))
+
+# When a conversion itself might fail, guard it:
+def safe_int(raw):
+    try:
+        return int(raw)
+    except ValueError:
+        return None                 # caller checks for None and reacts</code></pre></div>
+      <div class="block"><p class="lbl">In your assessment</p>
+        <p>For each input, show what happens when it is invalid: the message shown, the data <i>not</i> stored, the program carrying on. That screenshot or test-table row is direct evidence of handling the invalid case.</p></div>
+      <div class="block"><p class="lbl">Common gotcha</p>
+        <p>Wrapping the whole program in one giant <code>try/except</code> that silently swallows everything. That hides bugs rather than handling them. Catch the specific error, close to where it happens, and respond clearly.</p></div>
+    </section>
+
+    <section class="widget" id="flexible">
+      <div class="whead"><span class="wname">Flexible code, not magic numbers</span><span class="badge t2">L2</span><span class="badge t3">L3</span></div>
+      <p class="one-line">Use named constants and derived values in place of literals.</p>
+      <div class="block"><p class="lbl">What it is</p>
+        <p>A "magic number" is a bare value like <code>500</code> or <code>0.15</code> sitting in your code with no name. Both standards reward "using constants, variables and derived values in place of literals" — giving values names and working things out from them rather than hard-coding.</p></div>
+      <div class="block"><p class="lbl">Why it matters</p>
+        <p>It is half of what "flexible" means in the grade criteria. Named constants make a program easier to read, easier to change, and harder to get subtly wrong — and markers can see the intent at a glance.</p></div>
+      <div class="block"><p class="lbl">Example</p>
+        <p class="cmp-tag">Magic numbers — what does 500 mean? why 0.15?</p>
+        <pre><code class="language-python">def total(price, qty):
+    if qty &gt; 10:
+        price = price * 0.85        # 0.85? a discount? how much?
+    return price * qty * 1.15       # 1.15? tax? which rate?</code></pre>
+        <p class="cmp-tag">Named — the code now explains itself</p>
+        <pre><code class="language-python">GST_RATE = 0.15
+BULK_THRESHOLD = 10
+BULK_DISCOUNT = 0.15
+
+def total(price, qty):
+    if qty &gt; BULK_THRESHOLD:
+        price = price * (1 - BULK_DISCOUNT)   # derived, not hard-coded
+    return price * qty * (1 + GST_RATE)</code></pre></div>
+      <div class="block"><p class="lbl">In your assessment</p>
+        <p>Put your fixed values in clearly named constants near the top of the file or class. When you explain your code, point to one and note that changing it in a single place updates the whole program — that is flexibility you can articulate.</p></div>
+      <div class="block"><p class="lbl">Common gotcha</p>
+        <p>The same literal repeated in several places. If you ever change one and miss another, the program is now inconsistent. One named constant, used everywhere, removes that whole class of bug.</p></div>
+    </section>
+    <!-- ========================= EVIDENCING IT ========================= -->
+    <p class="band">Evidencing it<span class="bandsub">proving the testing happened</span></p>
+
+    <section class="widget" id="table">
+      <div class="whead"><span class="wname">The test table</span><span class="badge t2">L2</span><span class="badge t3">L3</span></div>
+      <p class="one-line">The single most useful piece of evidence you can produce.</p>
+      <div class="block"><p class="lbl">What it is</p>
+        <p>A simple table listing each test: what you fed in, what kind of case it is, what you expected, what actually happened, and whether it passed. It turns "I tested it" into something a marker can see and trust.</p></div>
+      <div class="block"><p class="lbl">Why it matters</p>
+        <p>"Organised testing" is the wording for Merit; "comprehensively tested" is the wording for Excellence. A test table is what <i>organised</i> and <i>comprehensive</i> look like on the page. Without it, your testing is invisible — and invisible testing earns no marks.</p></div>
+      <div class="block"><p class="lbl">Example</p>
+        <p>One feature — adding a score that must be 0–100 — tested across all three kinds of case:</p>
+        <table class="tt">
+          <thead><tr><th>Input</th><th>Case</th><th>Expected</th><th>Actual</th><th>✓/✗</th></tr></thead>
+          <tbody>
+            <tr><td>72</td><td class="kase">expected</td><td>added</td><td>added</td><td class="pass">✓</td></tr>
+            <tr><td>0</td><td class="kase">boundary</td><td>added</td><td>added</td><td class="pass">✓</td></tr>
+            <tr><td>100</td><td class="kase">boundary</td><td>added</td><td>added</td><td class="pass">✓</td></tr>
+            <tr><td>101</td><td class="kase">invalid</td><td>rejected, message</td><td>rejected, message</td><td class="pass">✓</td></tr>
+            <tr><td>abc</td><td class="kase">invalid</td><td>rejected, message</td><td>rejected, message</td><td class="pass">✓</td></tr>
+            <tr><td>(empty)</td><td class="kase">invalid</td><td>rejected, message</td><td>rejected, message</td><td class="pass">✓</td></tr>
+          </tbody>
+        </table></div>
+      <div class="block"><p class="lbl">In your assessment</p>
+        <p>Make one of these for each feature. Where a test <i>fails</i>, do not hide it — record the failure, fix the bug, and add a row showing it now passes. A fixed failure is stronger evidence than a row that was green from the start, because it proves you tested and refined.</p></div>
+      <div class="block"><p class="lbl">Common gotcha</p>
+        <p>Writing the table from memory after you finish, with every row already passing. Markers can tell. Build it as you go, edges and invalid inputs included.</p></div>
+    </section>
+
+    <section class="widget" id="harness">
+      <div class="whead"><span class="wname">An automatic test runner</span><span class="badge t3">L3</span></div>
+      <p class="one-line">Let the program test itself and print the report.</p>
+      <div class="block"><p class="lbl">What it is</p>
+        <p>Instead of testing by hand each time, you write your cases once as data and loop over them, printing PASS or FAIL. You do not need a testing library — a list of cases and a loop is clearer for a marker to read, and re-runs in a second every time you change your code.</p></div>
+      <div class="block"><p class="lbl">Why it matters</p>
+        <p>This is organised, repeatable, comprehensive testing — and the printed report drops straight into your evidence. It also catches the bug you accidentally reintroduce later, which hand-testing misses.</p></div>
+      <div class="block"><p class="lbl">Example</p>
+        <pre><code class="language-python">def final_price(price, discount_percent):
+    if price &lt; 0:
+        raise ValueError("price cannot be negative")
+    if not 0 &lt;= discount_percent &lt;= 100:
+        raise ValueError("discount must be 0-100")
+    return round(price * (1 - discount_percent / 100), 2)
+
+# description, inputs, and what we expect ("ValueError" = should be rejected)
+TEST_CASES = [
+    ("expected: half price",   100.0,  50, 50.0),
+    ("boundary: full discount",100.0, 100,  0.0),
+    ("invalid: negative price", -5.0,  10, "ValueError"),
+]
+
+def run_tests(cases):
+    passed = 0
+    for description, price, discount, expected in cases:
+        try:
+            got = final_price(price, discount)
+        except ValueError:
+            got = "ValueError"
+        ok = (got == expected)
+        passed += ok
+        print(f"{'PASS' if ok else 'FAIL':&lt;6}{description}")
+    print(f"{passed}/{len(cases)} passed")
+
+run_tests(TEST_CASES)</code></pre></div>
+      <div class="block"><p class="lbl">In your assessment</p>
+        <p>Keep your cases in one list and run them after every change. Paste the final report into your evidence, and explain one boundary and one invalid case in words so the marker sees you understood <i>why</i> each was tested.</p></div>
+      <div class="counts"><b>Why it matters at Level 3:</b> a self-testing program demonstrates the organised, comprehensive testing the refined (Excellence) criterion asks for — and shows real software-development practice.</div>
+      <div class="demo"><span class="runtag">▶ run</span><span>Run the full version in <a href="./test_harness.py">test_harness.py</a></span></div>
+    </section>
+
+    <section class="widget" id="debug">
+      <div class="whead"><span class="wname">Showing a bug fixed</span><span class="badge t2">L2</span><span class="badge t3">L3</span></div>
+      <p class="one-line">Debugging is evidence — if you capture it.</p>
+      <div class="block"><p class="lbl">What it is</p>
+        <p>A short before-and-after record: the test that failed, what was wrong, the change you made, and the test passing afterwards. Both standards reward "testing and debugging" — and the debugging only counts if it is visible.</p></div>
+      <div class="block"><p class="lbl">Why it matters</p>
+        <p>It is the clearest possible proof of refinement. A marker reading "input 100 returned Merit, should be Excellence; fixed the threshold from <code>&gt;</code> to <code>&gt;=</code>; retested, now correct" can see genuine iterative improvement — exactly what Excellence rewards.</p></div>
+      <div class="block"><p class="lbl">Example — a debugging note</p>
+        <pre><code class="language-python"># BUG found by boundary test:
+#   grade_mark(80) returned "Merit", expected "Excellence".
+#   Cause: threshold used  if mark &gt; 80  (strictly greater).
+#   Fix:   changed to       if mark &gt;= 80
+#   Retested boundary cases 79, 80, 81 -&gt; Merit, Excellence, Excellence. Correct.</code></pre>
+        <p style="margin-top:10px">A handful of notes like this through your project tells the whole story of how the program got better.</p></div>
+      <div class="block"><p class="lbl">In your assessment</p>
+        <p>Each time a test fails, capture the four parts: the failing case, the cause, the fix, the passing retest. Screenshots, a short log, or commit messages all work. This is also where version history (e.g. Git commits) becomes evidence rather than admin.</p></div>
+      <div class="block"><p class="lbl">Common gotcha</p>
+        <p>Fixing bugs silently as you go and keeping no record. The work happened, but you cannot prove it — so it cannot lift your grade. Leave the trail.</p></div>
+    </section>
+
+    <!-- ========================= JOURNEY ========================= -->
+    <p class="band">Putting it together<span class="bandsub">one task, two grades</span></p>
+
+    <div class="capstone" id="journey">
+      <h2>Achieved → Excellence, on one small function</h2>
+      <p class="one-line" style="margin-bottom:14px">The same postage calculator, before and after the work this guide is about.</p>
+      <p style="max-width:62ch">Two versions of one function do the identical job. Version 1 works on expected input and nothing else — magic numbers, no validation, a crash waiting for the first odd input. Version 2 is the same logic made flexible and robust: named constants, validated input, the invalid case handled, clear structure. Run them side by side and you can see precisely where the grade difference lives.</p>
+      <p style="max-width:62ch;margin-top:14px"><b>What changed between the two:</b></p>
+      <ul>
+        <li>bare numbers like <code>500</code> and <code>20</code> became named constants;</li>
+        <li>input is validated for type and range before it is used;</li>
+        <li>invalid weights are rejected with a clear error instead of a wrong answer or a crash;</li>
+        <li>the bands are derived from the constants, so the program flexes when they change.</li>
+      </ul>
+      <p style="max-width:62ch;margin-top:14px">None of that made the program <i>cleverer</i>. It made it <i>robust</i> — and robust is what the top of the standard asks for.</p>
+      <div class="demo" style="margin-top:16px"><span class="runtag">▶ run</span><span>Read and run both versions in <a href="./refinement_demo.py">refinement_demo.py</a></span></div>
+    </div>
+
+  </main>
+</div>
+
+<footer>Testing &amp; evidence reference · Year 12 &amp; 13 Digital Technology · companion to the tkinter widget reference</footer>
+
+<script>hljs.highlightAll();</script>
+</body>
+</html>
